@@ -224,6 +224,8 @@ public class MainActivity extends AppCompatActivity {
                             strTemperature = current.getString("temp_c") + "°C";
                             strHumidity = "Humidity is " + current.getString("humidity") + "%";
                             strDescription = "The weather is " + strCondition + " with a cloud cover of " + current.getString("cloud") + "%.";
+                            strDescription += current.getString("wind_kph") + " km/h winds blow from " + current.getString("wind_dir") + " direction.";
+                            strDescription += "The UV index is " + current.getString("uv") + " while net precipitation is " + current.getString("precip_mm") + "mm. \n[as at " + current.getString("last_updated") + "]";
                         } catch (JSONException error) {
                             Toast.makeText(getApplicationContext(), "JSON Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                             return;
