@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class Helper_SharedPreferences {
     Context context;
@@ -14,26 +15,30 @@ public class Helper_SharedPreferences {
         this.context = context;
         if (sharedPreferences == null) {
             sharedPreferences = context.getSharedPreferences("ITE2152_Practical_Test_E2145293", MODE_PRIVATE);
-            this.latitude = sharedPreferences.getFloat("latitude", 0);
-            this.longitude = sharedPreferences.getFloat("longitude", 0);
+            this.latitude = Double.parseDouble(sharedPreferences.getString("latitude", "0"));
+            this.longitude = Double.parseDouble(sharedPreferences.getString("longitude", "0"));
         }
     }
 
-    public double getLatitude() {
-        return latitude;
+    public String getLatitude() {
+        Log.d("SharedPreferences: latRead-", this.latitude + "");
+        return Double.toString(this.latitude);
     }
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
-        sharedPreferences.edit().putFloat("latitude", (float) latitude).apply();
+        Log.d("SharedPreferences: lat-", latitude + "");
+        sharedPreferences.edit().putString("latitude", Double.toString(latitude)).apply();
     }
 
-    public double getLongitude() {
-        return longitude;
+    public String getLongitude() {
+        Log.d("SharedPreferences: lonRead-", this.longitude + "");
+        return Double.toString(this.longitude);
     }
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
-        sharedPreferences.edit().putFloat("longitude", (float) longitude).apply();
+        Log.d("SharedPreferences: lon-", longitude + "");
+        sharedPreferences.edit().putString("longitude", Double.toString(longitude)).apply();
     }
 }

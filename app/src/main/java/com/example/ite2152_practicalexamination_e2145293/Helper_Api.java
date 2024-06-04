@@ -13,7 +13,6 @@ public class Helper_Api {
     private Helper_Api(Context context) {
         ctx = context;
         requestQueue = getRequestQueue();
-
     }
 
     public static synchronized Helper_Api getInstance(Context context) {

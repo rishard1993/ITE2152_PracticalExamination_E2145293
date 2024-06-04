@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">ITE2152_PracticalExamination_E2145293</string>
+    <string name="practical_test_e2145293">Practical Test - E2145293</string>
+    <string name="location_data">Location Data:</string>
+    <string name="latitude_longitude_data"><![CDATA[Latitude & longitude data]]></string>
+    <string name="reverse_geo_coded_data">Reverse Geo-coded Address:</string>
+    <string name="geo_coded_address_data">geo-coded address data</string>
+    <string name="current_system_time">Current System Time:</string>
+    <string name="system_time">System Time</string>
+    <string name="partly_cloudy">Press to refresh data --></string>
+    <string name="_24_5_c">-- °C</string>
+    <string name="humdity_71">Please wait...</string>
+    <string name="location_name">Loading Data</string>
+    <string name="description_text_goes_here">…</string>
+    <string name="test_api">Test API</string>
+    <string name="test_location">Reload Data</string>
+    <string name="data_provided_by_weatherapi_com">Data provided by: weatherapi.com</string>
 </resources>
