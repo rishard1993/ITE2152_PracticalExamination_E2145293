@@ -3,6 +3,8 @@ package com.example.ite2152_practicalexamination_e2145293;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.icu.text.SimpleDateFormat;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -36,6 +38,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -103,7 +107,8 @@ public class SubActivity extends AppCompatActivity {
         subBtnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(SubActivity.this, "Search Clicked!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SubActivity.this, "Search Clicked! Search: " + subTxtSearch.getText().toString(), Toast.LENGTH_SHORT).show();
+                getGeocodedData(subTxtSearch.getText().toString());
             }
         });
 
@@ -189,4 +194,35 @@ public class SubActivity extends AppCompatActivity {
         Helper_Api.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
     }
 
+    private void getGeocodedData(String locationName) {
+        Geocoder geocoder = new Geocoder(SubActivity.this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(locationName, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                double latitude = address.getLatitude();
+                double longitude = address.getLongitude();
+
+                //display geocoded location
+                subTxtAddress.setText("Latitude: " + latitude + ",\nLongitude: " + longitude);
+
+                //Load weather data for the new location
+                refreshWeatherData(latitude,longitude);
+
+                //update shared preferences
+                sharedPreferences.setLatitude(latitude);
+                sharedPreferences.setLongitude(longitude);
+            } else {
+                subTxtAddress.setText("No coordinates found for the location.");
+                subTxtTemperature.setText("--");
+                subTxtCondition.setText("");
+                subTxtHumidity.setText("");
+                subTxtLocation.setText("Please Try Again.");
+                subTxtDescription.setText("");
+                subImageIcon.setImageResource(R.drawable.baseline_wb_cloudy_24);
+            }
+        } catch (Exception exception) {
+            Log.d("SubActivity:Geocoder", "Geocoder Error: " + exception.getMessage());
+        }
+    }
 }
