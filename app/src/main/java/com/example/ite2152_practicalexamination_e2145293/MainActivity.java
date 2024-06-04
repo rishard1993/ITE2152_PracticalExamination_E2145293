@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,8 +34,10 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView textView;
+    TextView txtCondition, txtTemperature, txtHumidity, txtLocation, txtDescription, txtTime;
+    ImageView imageIcon;
     Button btnApi, btnLocation;
+    ImageButton btnRefresh;
     String TAG = "WeatherRequest";
     RequestQueue queue;
     Timer timer;
@@ -51,7 +55,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Initialize the UI elements
-        textView = findViewById(R.id.textView);
+        txtCondition = findViewById(R.id.txtCondition);
+        txtTemperature = findViewById(R.id.txtTemperature);
+        txtHumidity = findViewById(R.id.txtHumidity);
+        txtLocation = findViewById(R.id.txtLocation);
+        txtDescription = findViewById(R.id.txtDescription);
+        txtTime = findViewById(R.id.txtTime);
+        btnRefresh = findViewById(R.id.btnRefresh);
+        imageIcon = findViewById(R.id.imageIcon);
+
+
         btnApi = findViewById(R.id.buttonRequest);
         btnLocation = findViewById(R.id.buttonLocation);
 
@@ -72,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        textView.setText(Calendar.getInstance().getTime().toString());
+                        txtTime.setText(Calendar.getInstance().getTime().toString());
                     }
                 });
             }
@@ -98,12 +111,12 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onResponse(String response) {
                                 // Display the first 500 characters of the response string.
-                                textView.setText("Response is: " + response.substring(0, 500));
+                                txtDescription.setText("Response is: " + response.substring(0, 500));
                             }
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        textView.setText("Error: " + error.getMessage());
+                        Toast.makeText(getApplicationContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -111,9 +124,6 @@ public class MainActivity extends AppCompatActivity {
                 stringRequest.setTag(TAG);
 
                 // Add the request to the RequestQueue.
-                //queue.add(stringRequest);
-
-                // Add a request (in this example, called stringRequest) to your RequestQueue.
                 Helper_Api.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
             }
         });
