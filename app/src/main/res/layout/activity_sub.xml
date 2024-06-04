@@ -5,10 +5,11 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".SubActivity">
+
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
@@ -19,23 +20,25 @@
         app:srcCompat="@drawable/app_bg" />
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="-204dp"
-        tools:layout_editor_absoluteY="-10dp">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical" >
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/txtTitle"
+                    android:id="@+id/subTxtTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -50,7 +53,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
                 <TextView
@@ -61,7 +64,7 @@
                     android:fontFamily="sans-serif"
                     android:paddingVertical="2dp"
                     android:paddingStart="10dp"
-                    android:text="@string/location_data"
+                    android:text="Search Location:"
                     android:textAlignment="viewStart"
                     android:textSize="16sp" />
 
@@ -69,27 +72,35 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/txtCoordinates"
-                    android:layout_width="0dp"
+                <EditText
+                    android:id="@+id/subEditTextSearch"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2"
-                    android:background="@color/transparentWhite"
+                    android:layout_weight="5"
+                    android:background="@color/white"
+                    android:ems="10"
                     android:fontFamily="sans-serif-condensed-light"
+                    android:inputType="text"
                     android:paddingVertical="2dp"
                     android:paddingStart="20dp"
-                    android:text="@string/latitude_longitude_data"
-                    android:textAlignment="viewStart"
                     android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/subBtnSearch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="Search"
+                    app:icon="@drawable/baseline_search_24" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
                 <TextView
@@ -100,7 +111,7 @@
                     android:fontFamily="sans-serif"
                     android:paddingVertical="2dp"
                     android:paddingStart="10dp"
-                    android:text="@string/reverse_geo_coded_data"
+                    android:text="Geo-coded Address"
                     android:textAlignment="viewStart"
                     android:textSize="16sp" />
 
@@ -108,11 +119,11 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/txtAddress"
+                    android:id="@+id/subTxtAddress"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
@@ -128,7 +139,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
                 <TextView
@@ -147,11 +158,11 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/txtTime"
+                    android:id="@+id/subTxtTime"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2"
@@ -191,7 +202,7 @@
                         android:padding="5dp">
 
                         <ImageView
-                            android:id="@+id/imageIcon"
+                            android:id="@+id/subImageIcon"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
                             app:layout_constraintBottom_toBottomOf="@+id/btnRefresh"
@@ -200,31 +211,19 @@
                             app:srcCompat="@android:drawable/ic_dialog_info" />
 
                         <TextView
-                            android:id="@+id/txtCondition"
+                            android:id="@+id/subTxtCondition"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:fontFamily="sans-serif-light"
                             android:textSize="14sp"
-                            app:layout_constraintBottom_toBottomOf="@+id/imageIcon"
-                            app:layout_constraintStart_toEndOf="@+id/imageIcon"
-                            app:layout_constraintTop_toTopOf="@+id/imageIcon" />
-
-                        <Button
-                            android:id="@+id/btnRefresh"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:background="@drawable/baseline_refresh_24"
-                            android:backgroundTint="@color/white"
-                            android:elevation="2dp"
-                            app:icon="@drawable/baseline_refresh_24"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/baseline_refresh_24" />
+                            app:layout_constraintBottom_toBottomOf="@+id/subImageIcon"
+                            app:layout_constraintStart_toEndOf="@+id/subImageIcon"
+                            app:layout_constraintTop_toTopOf="@+id/subImageIcon" />
 
 
                         <TextView
-                            android:id="@+id/txtTemperature"
+                            android:id="@+id/subTxtTemperature"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif-light"
@@ -232,10 +231,10 @@
                             android:textSize="80sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/btnRefresh" />
+                            app:layout_constraintTop_toBottomOf="@+id/subImageIcon" />
 
                         <TextView
-                            android:id="@+id/txtHumidity"
+                            android:id="@+id/subTxtHumidity"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="sans-serif-light"
@@ -243,10 +242,10 @@
                             android:textSize="16sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/txtTemperature" />
+                            app:layout_constraintTop_toBottomOf="@+id/subTxtTemperature" />
 
                         <TextView
-                            android:id="@+id/txtLocation"
+                            android:id="@+id/subTxtLocation"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
@@ -255,10 +254,10 @@
                             android:textSize="20sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/txtHumidity" />
+                            app:layout_constraintTop_toBottomOf="@+id/subTxtHumidity" />
 
                         <TextView
-                            android:id="@+id/txtDescription"
+                            android:id="@+id/subTxtDescription"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
@@ -269,7 +268,7 @@
                             android:textSize="14sp"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/txtLocation" />
+                            app:layout_constraintTop_toBottomOf="@+id/subTxtLocation" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -279,44 +278,17 @@
     </ScrollView>
 
     <Button
-        android:id="@+id/btnSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/holo_blue_dark"
-        android:elevation="2dp"
-        android:shadowColor="#000000"
-        android:text="Search Location"
-        app:icon="@drawable/baseline_search_24"
-        app:layout_constraintBottom_toTopOf="@+id/btnExit"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btnExit"
+        android:id="@+id/subBtnBack"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="10dp"
-        android:backgroundTint="@android:color/holo_red_dark"
+        android:backgroundTint="@android:color/holo_blue_dark"
         android:elevation="2dp"
         android:shadowColor="#000000"
-        android:text="Exit"
-        app:icon="@drawable/baseline_power_settings_new_24"
+        android:text="Back"
+        app:icon="@drawable/baseline_navigate_before_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="10dp"
-        android:fontFamily="sans-serif-condensed-light"
-        android:text="@string/data_provided_by_weatherapi_com"
-        android:textAlignment="viewStart"
-        android:textColor="@color/white"
-        android:textSize="12sp"
-        android:textStyle="italic"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

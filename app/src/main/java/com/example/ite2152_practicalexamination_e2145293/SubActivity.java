@@ -3,8 +3,6 @@ package com.example.ite2152_practicalexamination_e2145293;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.icu.text.SimpleDateFormat;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -37,27 +35,24 @@ import com.bumptech.glide.request.RequestOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainActivity extends AppCompatActivity {
-
-    TextView txtCoordinates, txtAddress, txtTime, txtCondition, txtTemperature, txtHumidity, txtLocation, txtDescription;
-    ImageView imageIcon;
-    Button btnRefresh, btnSearch, btnExit;
-    String TAG = "WeatherRequestMain";
+public class SubActivity extends AppCompatActivity {
+    TextView subTxtSearch, subTxtAddress, subTxtTime, subTxtCondition, subTxtTemperature, subTxtHumidity, subTxtLocation, subTxtDescription;
+    ImageView subImageIcon;
+    Button subBtnSearch, subBtnBack;
+    String TAG = "WeatherRequestSub";
     RequestQueue queue;
-    Timer timer;
+    Timer subTimer;
     LocationManager locationManager;
+    Helper_SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_sub);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -65,28 +60,27 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Initialize the UI elements
-        txtCoordinates = findViewById(R.id.txtCoordinates);
-        txtAddress = findViewById(R.id.txtAddress);
-        txtTime = findViewById(R.id.txtTime);
-        txtCondition = findViewById(R.id.txtCondition);
-        txtTemperature = findViewById(R.id.txtTemperature);
-        txtHumidity = findViewById(R.id.txtHumidity);
-        txtLocation = findViewById(R.id.txtLocation);
-        txtDescription = findViewById(R.id.txtDescription);
-        imageIcon = findViewById(R.id.imageIcon);
-        btnRefresh = findViewById(R.id.btnRefresh);
-        btnSearch = findViewById(R.id.btnSearch);
-        btnExit = findViewById(R.id.btnExit);
+        subTxtSearch = findViewById(R.id.subEditTextSearch);
+        subTxtAddress = findViewById(R.id.subTxtAddress);
+        subTxtDescription = findViewById(R.id.subTxtDescription);
+        subTxtLocation = findViewById(R.id.subTxtLocation);
+        subTxtCondition = findViewById(R.id.subTxtCondition);
+        subTxtHumidity = findViewById(R.id.subTxtHumidity);
+        subTxtTemperature = findViewById(R.id.subTxtTemperature);
+        subTxtTime = findViewById(R.id.subTxtTime);
+        subImageIcon = findViewById(R.id.subImageIcon);
+        subBtnSearch = findViewById(R.id.subBtnSearch);
+        subBtnBack = findViewById(R.id.subBtnBack);
 
-        //check Location Permissions
-        if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 100);
-        }
-        // Initialize the location manager
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        //Initialize Shared Preferences
+        sharedPreferences = new Helper_SharedPreferences(getApplicationContext());
+
+        double latitude = Double.parseDouble(sharedPreferences.getLatitude());
+        double longitude = Double.parseDouble(sharedPreferences.getLongitude());
+        refreshWeatherData(latitude,longitude);
 
         //Instantiate the timer
-        timer = new Timer();
+        subTimer = new Timer();
         //Create the task to update time
         TimerTask task = new TimerTask() {
             @Override
@@ -94,46 +88,30 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        txtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()));
+                        subTxtTime.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime()));
                     }
                 });
             }
         };
         //schedule the task to run periodically
-        timer.schedule(task, 0, 500);
+        subTimer.schedule(task, 0, 500);
 
         // Instantiate the RequestQueue.
         queue = Helper_Api.getInstance(this.getApplicationContext()).
                 getRequestQueue();
-        //Load weather data at launch
-        updateLocation();
 
-        //Event handler for the refresh button
-        btnRefresh.setOnClickListener(new View.OnClickListener() {
+        subBtnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Start Refreshing...", Toast.LENGTH_SHORT).show();
-                updateLocation();
-                Toast.makeText(getApplicationContext(), "Refresh Complete.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SubActivity.this, "Search Clicked!", Toast.LENGTH_SHORT).show();
             }
         });
 
-        //Event Handler for the Search Button
-        btnSearch.setOnClickListener(new View.OnClickListener() {
+        subBtnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, SubActivity.class);
+                Intent intent = new Intent(SubActivity.this, MainActivity.class);
                 startActivity(intent);
-            }
-        });
-
-        //Event handler for the exit button
-        btnExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                moveTaskToBack(true);
-                android.os.Process.killProcess(android.os.Process.myPid());
-                System.exit(1);
             }
         });
     }
@@ -144,59 +122,6 @@ public class MainActivity extends AppCompatActivity {
         // Cancel all the pending requests at app close
         if (queue != null) {
             queue.cancelAll(TAG);
-        }
-    }
-
-    private void updateLocation() {
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Toast.makeText(getApplicationContext(), "Please turn on GPS.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(getApplicationContext(), "Location Permissions Not Available.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        LocationListener locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(@NonNull Location location) {
-                double latitude = location.getLatitude();
-                double longitude = location.getLongitude();
-
-                //update value of txtCoordinates
-                txtCoordinates.setText("Latitude: " + latitude + "\nLongitude: " + longitude);
-
-                //update value of txtAddress
-                txtAddress.setText(getReverseGeocodedData(latitude, longitude));
-
-                //call refresh method to update weather data
-                refreshWeatherData(latitude,longitude);
-
-                //Remove updates to get location only once
-                locationManager.removeUpdates(this);
-            }
-        };
-        if (ContextCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener, Looper.getMainLooper());
-        } else {
-            Toast.makeText(getApplicationContext(), "Unable to find location.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private String getReverseGeocodedData(double latitude, double longitude) {
-        Geocoder geoCoder = new Geocoder(MainActivity.this, Locale.getDefault());
-        try {
-            Log.d("GeoData : Start: ", "---");
-            List<Address> addresses = geoCoder.getFromLocation(latitude,longitude,1);
-            String addressText = "";
-            if (addresses != null && !addresses.isEmpty()) {
-                Address address = addresses.get(0);
-                addressText = address.getAddressLine(0);
-            }
-            return addressText;
-        }
-        catch (IOException e) {
-            return "Geocoder Error: " + e.getMessage();
         }
     }
 
@@ -211,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(String response) {
 
                         String strLocation = "location not set";
-                        String strCondition = "Press Refresh to get weather --->";
+                        String strCondition = "";
                         String strIconUrl = "";
                         String strTemperature = "--.-";
                         String strHumidity = "--";
@@ -234,20 +159,20 @@ public class MainActivity extends AppCompatActivity {
                             return;
                         }
 
-                        txtLocation.setText(strLocation);
-                        txtCondition.setText(strCondition);
-                        txtTemperature.setText(strTemperature);
-                        txtHumidity.setText(strHumidity);
-                        txtDescription.setText(strDescription);
+                        subTxtLocation.setText(strLocation);
+                        subTxtCondition.setText(strCondition);
+                        subTxtTemperature.setText(strTemperature);
+                        subTxtHumidity.setText(strHumidity);
+                        subTxtDescription.setText(strDescription);
 
                         // Use Glide to load the image from the URL
-                        Glide.with(MainActivity.this)
+                        Glide.with(SubActivity.this)
                                 .load(strIconUrl)
                                 .apply(new RequestOptions()
                                         .placeholder(R.drawable.baseline_wb_cloudy_24) // Placeholder image
                                         .error(R.drawable.baseline_wb_cloudy_24) // Error image in case of loading failure
                                 )
-                                .into(imageIcon);
+                                .into(subImageIcon);
                     }
                 }, new Response.ErrorListener() {
             @Override
